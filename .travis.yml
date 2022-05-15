@@ -1,0 +1,27 @@
+language: python 
+
+services: 
+  - postgresql
+
+python:
+  - "3.6"
+
+
+install: 
+  - pip install -r requirements.txt 
+  - pip install coveralls
+
+before_script:
+  - psql -c "CREATE USER moringa WITH PASSWORD 'colo1234';" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to moringa ;" -U postgres
+  - psql -c "CREATE DATABASE test_duka;" -U moringa
+  
+  - pip install coverage
+
+script:
+    
+    - python manage.py test dukaapp
+    - coverage run --source='.' manage.py test
+
+after_success:
+  - coveralls
